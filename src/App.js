@@ -1,6 +1,7 @@
 import logo from './logo.svg';
 import React, {useState, useReducer} from 'react'
 import './App.css';
+import Todo from './Todo'
 
 // state.countでアクセスできる
 
@@ -13,36 +14,55 @@ const ACTIONS = {
   DECREMENT: 'decrement'
 }
 
-function reducer(state, action) {
-  // action = {type: 'decrement'}
+function reducer(todos, action) {
   switch(action.type) {
-    case ACTIONS.ICREMENT:
-      return { count: state.count + 1}
-    case ACTIONS.DECREMENT:
-      return { count: state.count - 1}
+    case 'add-todo':
+      return [...todos, {id: new Date, name: action.payload.name, is_complete: false}]
+    case 'toggle-todo':
+      return todos.map((todo) => {
+        debugger
+        if (todo.id === action.payload.id) {
+          debugger
+          return {...todo, is_complete: !todo.is_complete}
+        }
+        return todo
+      })
+    case 'delete-todo':
+      return todos.filter((todo) => todo.id !== action.payload.id)
     default:
-      return state;
-  }   
+     return todos
+  }
+}
+
+function toggleTodo(todos,newtodo) {
+   const newTodos = [...todos]
+   const target_todo = newTodos.find((todo) => todo.id === newtodo.id)
+   target_todo.is_complete = target_todo.is_complete
+   return target_todo
 }
 
 function App() {
   // reducerはコールバック
-  const [state, dispatch] = useReducer(reducer, {count:0})
-  const [count, setCount] = useState(0)
+  const [todos, dispatch] = useReducer(reducer,[])
+  const [name, setName] = useState('');
 
-  const increment = () => {
-    dispatch({type: ACTIONS.ICREMENT})
-    // setCount(prevCount => prevCount + 1)
-  } 
-  const decrement = () => {
-    dispatch({type: ACTIONS.DECREMENT})
-    // setCount(prevCount => prevCount - 1)
-  } 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setName(name)
+
+    dispatch({type: 'add-todo', payload: { name: name}})
+    setName('')
+  }
+
   return (
     <div className="App">
-      <button onClick={decrement}>-</button>
-        {state.count}
-      <button onClick={increment}>+</button>
+      <form onSubmit={handleSubmit}>
+        <input type="text" value={name} onChange={e => setName(e.target.value)}/>
+        <input type="submit"/>
+      </form>
+  {todos.map((todo) => {
+    return <Todo todo={todo} dispatch={dispatch}/>
+  })}
     </div>
   );
 }
