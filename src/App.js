@@ -8,12 +8,17 @@ import './App.css';
 //   return { count: state.count + 1}
 // }
 
+const ACTIONS = {
+  ICREMENT: 'increment',
+  DECREMENT: 'decrement'
+}
+
 function reducer(state, action) {
   // action = {type: 'decrement'}
   switch(action.type) {
-    case 'increment':
+    case ACTIONS.ICREMENT:
       return { count: state.count + 1}
-    case 'decrement':
+    case ACTIONS.DECREMENT:
       return { count: state.count - 1}
     default:
       return state;
@@ -26,11 +31,11 @@ function App() {
   const [count, setCount] = useState(0)
 
   const increment = () => {
-    dispatch({type: 'increment'})
+    dispatch({type: ACTIONS.ICREMENT})
     // setCount(prevCount => prevCount + 1)
   } 
   const decrement = () => {
-    dispatch({type: 'decrement'})
+    dispatch({type: ACTIONS.DECREMENT})
     // setCount(prevCount => prevCount - 1)
   } 
   return (
